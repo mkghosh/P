@@ -39,31 +39,28 @@ public class MyServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
-//		String gender = request.getParameter("gender");
-//		String greetings = "";
-//		if(gender.equals("male"))
-//			greetings = "MR.";
-//		else if(gender.equals("female"))
-//			greetings = "MISS";
 		out.println("<!DOCTYPE HTML>");
-//		out.println("It Works");
-//		out.println("Welcome " + greetings + " " + request.getParameter("firstName") 
-//		+ " " +  request.getParameter("lastName"));
-		
+
 		Marks marks = getMarks(request);
 		Student student = getStudent(request);
 		student.setMarks(marks);
-		double cgpa = 0.0;
-		try {
-			cgpa = student.getCumulativeGrade();
-		} catch (MarksNotDefined mnd) {
-			System.out.println(mnd.getMessage());
-		}
-		
-		out.println("<p>Mr./Miss : " + student.getName() + "<br/>"
-				+ "You have obtained " + cgpa );
+		Result result = null;
+		String buttonType = request.getParameter("action");
+		if(buttonType.equals("Next")) {
+			response.sendRedirect("/P/html/submit_test.html");
+		} else {
+
+			try {
+				result = new Result(student.getStId(), student.getName(), student.getCumulativeGrade());
+			} catch (MarksNotDefined mnd) {
+				System.out.println(mnd.getMessage());
+			}
+			
+			out.println("<p>Mr./Miss : " + result.getStName() + "<br/>"
+					+ "You have obtained " + result.getCgpa() + "<br/>" +
+					"Your grade is : " + result.getGrade());
+		}	
 	}
 
 	private Student getStudent(HttpServletRequest request) {
